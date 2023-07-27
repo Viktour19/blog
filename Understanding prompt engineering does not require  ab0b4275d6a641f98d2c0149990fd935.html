@@ -1,4 +1,4 @@
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Approximations to divergences between discrete distributions (WIP)</title><style>
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Understanding prompt engineering does not require rethinking generalization</title><style>
 /* cspell:disable-file */
 /* webkit printing magic: print all background colors */
 html {
@@ -281,6 +281,10 @@ ol > li {
 .collection-title {
 	display: inline-block;
 	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
 }
 
 .simple-table {
@@ -637,16 +641,19 @@ blockquote {
 .block-color-red_background {
 	background: rgba(253, 235, 236, 1);
 }
+.select-value-color-interactiveBlue { background-color: rgba(35, 131, 226, .07); }
 .select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
 .select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
 .select-value-color-green { background-color: rgba(219, 237, 219, 1); }
 .select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
-.select-value-color-opaquegray { background-color: rgba(255, 255, 255, 0.0375); }
+.select-value-color-translucentGray { background-color: rgba(255, 255, 255, 0.0375); }
 .select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
 .select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
 .select-value-color-red { background-color: rgba(255, 226, 221, 1); }
 .select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
 .select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
 
 .checkbox {
 	display: inline-flex;
@@ -665,9 +672,11 @@ blockquote {
 .checkbox-off {
 	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
 }
-	
-</style></head><body><article id="ab0b4275-d6a6-41f9-8d2c-0149990fd935" class="page sans"><header><h1 class="page-title">Approximations to divergences between discrete distributions (WIP)</h1></header><div class="page-body"><p id="11ff439f-4690-429d-8c02-4c27278e9261" class="">
-</p><p id="9a09cd79-3484-4629-93b3-f1c6abe1481e" class="">
-</p><p id="56ba687b-d450-4c89-af4d-25cfed65e79e" class="">Zeta distribtions</p><p id="b5cd04b2-7dee-4d23-b44a-1def0db6f2a7" class="">Normal distribution</p><p id="23a6a4e3-ec42-4fa0-b08d-b8f32cec771f" class="">Numerical simulations</p><p id="de99a2a5-e1c9-42cf-98b5-234f7c764920" class="">Notes on applications</p><p id="259178ee-76ff-4448-af2f-4ba8075ca913" class="">
-</p><p id="44fb0e6d-344b-47cb-9727-812bc6c68532" class="">
-</p><p id="163de144-34ad-4b1e-b8e7-e9dfabcb5fa0" class=""><mark class="highlight-gray">Last updated: 20 Feb 2023</mark></p></div></article></body></html>
+
+</style></head><body><article id="ab0b4275-d6a6-41f9-8d2c-0149990fd935" class="page sans"><header><h1 class="page-title">Understanding prompt engineering does not require rethinking generalization</h1><p class="page-description"></p></header><div class="page-body"><p id="11ff439f-4690-429d-8c02-4c27278e9261" class=""><strong>Tldr: </strong>When learning over prompts, <em>classic</em> PAC-Bayes bounds are extremely tight; more so than any previous PAC-Bayes analysis of deep networks.</p><p id="c0af6a6f-fffc-4bd8-ab4a-6828d9b64bd2" class="">
+</p><p id="920afcd0-5368-4023-a29a-d39b2069694f" class=""><strong>Zero-shot performance of visual-language models</strong></p><p id="ce27707d-1d36-4d69-99cf-49b1303db8c3" class="">The dominant emerging paradigm in deep learning is to use large pre-trained models such as <a href="https://arxiv.org/abs/2103.00020">CLIP</a> or <a href="https://arxiv.org/abs/2102.05918">ALIGN</a> as feature extractors and provide weak supervision for a downstream target task via prompts, which are text descriptions of the desired tasks or concept to classify. This performs remarkably well – up to 75% accuracy on ImageNet. This has led to handcrafting of prompts or prompt engineering. When practitioners attempt to engineer prompts for a dataset - they often are not concerned with overfitting to the test set.  In the work I’ll be presenting at ICML SODS Workshop (<a href="https://sods-icml2023.github.io/">https://sods-icml2023.github.io</a>) we illustrate that in-fact you can’t overfit.</p><p id="d4272b01-414e-4137-afe0-981c64352df0" class="">
+</p><p id="2c328efb-bd32-4500-81bf-4a57a9febacb" class=""><strong>Observation:</strong> Given how small the vocabulary sizes and context lengths of such visual-language models are, the hypothesis class is relatively small compared to what is often studied in generalization of neural networks. For example, the VC dimension of neural networks is typically lower bounded by the number of parameters - in direct conflict with the paradigm of large models.</p><p id="9b530435-78ee-47ef-a1de-6163b2d85f41" class="">
+</p><p id="5bc8e41f-e14a-4a32-b8f9-5bf700375031" class=""><strong>Numerical non-vacuous bounds in deep learning</strong></p><p id="dcb55781-5a7f-4fb6-a462-13054f2b7e8e" class="">Whereas obtaining non-vacuous bounds for deep neural networks still remains a technical challenge when done on the weight space. Given a fixed image encoder, the text encoder of CLIP, for instance, is an injective map of the prompts to the weights of a linear classifier. One could evaluate classic PAC-Bayes bounds on the prompts. I show here the classic PAC-Bayes bound [<a href="https://www.semanticscholar.org/paper/PAC-Bayesian-model-averaging-McAllester/609be06b5a91ffb8c35abd1636cd2431ff32435d">McAllester 1999</a>].</p><figure id="313504fb-6e36-4a60-a9e6-5b53211b3c8b" class="image"><a href="figs/pacbound.png"><img style="width:432px" src="figs/pacbound.png"/></a></figure><p id="cf11ea85-39a1-400a-8ebd-88ace6d4fe11" class="">The dominant term is the KL divergence of the posterior from the prior. CLIP for instance has a vocabulary of about 50,000 tokens and a context length of 77. A uniform prior means that KL term = 77 ∗ log⁡(49408). Note we&#x27;re now operating in the discrete space of language tokens. This implies on a dataset like CIFAR-10 with 50000 training examples, 10 classes - we have a bound of ~30% on the risk any prompt-based classifier with 99% confidence. This is already much tighter than bounds we typically get for neural networks.</p><p id="29aeaca3-a615-497d-8d6e-367f3e82a1d3" class="">Clearly, we can do better with a more informative prior - e.g. a language model. Here’s a plot of the PAC-Bayes bound using the LLamA-7B as the prior. The way to interpret the plot is if the true risk according to the bound, is equal to the empirical risk - then all the points will be on the dotted line.</p><figure id="88bc508e-694f-4549-810c-dc44a07fadfd" class="image"><a href="figs/pacbayesbound.png"><img style="width:288px" src="figs/pacbayesbound.png"/></a></figure><p id="35cc6b4b-27d6-47a8-aa0b-fa401e002221" class="">
+</p><p id="c43f66a4-a084-4d19-ab35-3f017120bf3f" class="">This tells us if we simply use the prompt - a photo of a {class_name} for all the 1000 classes in ImageNet - our true risk will be no more than ~30% with high probability. Remarkable!</p><p id="f3057385-b306-45d4-8bf4-ea83f9c11e2f" class="">Certainly, these bounds rely on the fact that pre-trained visual-language models already contain some hypothesis class that will perform well on the training set - and the generalization of the underlying models themselves is not being analyzed but what this does provide is solid evidence for why the wide-spread practice of prompt-engineering is as principled as you can get from a statistical learning theory perspective.</p><p id="68d8e84d-bda6-4c18-b74f-352d111d9e17" class="">
+</p><p id="163de144-34ad-4b1e-b8e7-e9dfabcb5fa0" class=""><mark class="highlight-gray">Last updated: 27 Jul 2023</mark></p><p id="83479add-9313-49c5-8e9b-e4a266996977" class="">
+</p></div></article></body></html>
